@@ -1,0 +1,113 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: example-template
+objects:
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: my-app
+      labels:
+        app: my-app
+        service: my-app
+    spec:
+      ports:
+      - name: my-app
+        port: 8080
+        protocol: TCP
+      selector:
+        service: my-app
+
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: my-app
+      labels:
+        app: my-app
+        service: my-app
+    spec:
+      to:
+        kind: Service
+        name: my-app
+
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      name: my-app
+      labels:
+        app: my-app
+        service: my-app
+    spec:
+      replicas: 1
+      selector:
+        app: my-app
+      strategy:
+        type: Rolling
+      template:
+        metadata:
+          labels:
+            app: my-app
+            service: my-app
+        spec:
+          containers:
+            - name: my-app
+              image: docker-registry.default.svc:5000/araszka-playground/my-app:latest
+              imagePullPolicy: Always
+              resources:
+                limits:
+                  memory: 256Mi
+              ports:
+              - containerPort: 8080
+                protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /health
+                  port: 8080
+                initialDelaySeconds: 10
+                timeoutSeconds: 1
+              livenessProbe:
+                httpGet:
+                  path: /health
+                  port: 8080
+                initialDelaySeconds: 15
+                periodSeconds: 3
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            from:
+              kind: "ImageStreamTag"
+              name: "my-app:latest"
+            containerNames:
+              - my-app
+
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      labels:
+        app: my-app
+      name: my-app
+    spec:
+      output:
+        to:
+          kind: DockerImage
+          name: docker-registry.default.svc:5000/araszka-playground/my-app:latest
+      runPolicy: Serial
+      resources:
+        limits:
+          memory: "512Mi"
+      source:
+        git:
+          uri: https://github.com/redhat-aqe/rhv-2-openshift-demo.git
+          ref: master
+        contextDir: example_app
+        type: Git
+      strategy:
+        dockerStrategy:
+          from:
+            kind: DockerImage
+            name: fedora:29
+        type: Docker
+
