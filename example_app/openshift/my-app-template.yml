@@ -97,7 +97,7 @@ objects:
       runPolicy: Serial
       resources:
         limits:
-          memory: "512Mi"
+          memory: "1Gi"
       source:
         git:
           uri: https://github.com/redhat-aqe/rhv-2-openshift-demo.git
@@ -108,6 +108,6 @@ objects:
         dockerStrategy:
           from:
             kind: DockerImage
-            name: fedora:29
+            name: rhscl/python-36-rhel7:latest
         type: Docker
 
