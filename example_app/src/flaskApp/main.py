@@ -17,7 +17,7 @@ def hello():
 @app.route("/memory")
 def ready():
     # allocate a lot of memory
-    my_var = "x" * 1000000000
+    my_var = "x" * 1500000000
     return "Memory test"
 
 

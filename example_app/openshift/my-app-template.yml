@@ -56,7 +56,7 @@ objects:
               imagePullPolicy: Always
               resources:
                 limits:
-                  memory: 256Mi
+                  memory: 1Gi
               ports:
               - containerPort: 8080
                 protocol: TCP
@@ -64,7 +64,7 @@ objects:
                 httpGet:
                   path: /health
                   port: 8080
-                initialDelaySeconds: 10
+                initialDelaySeconds: 5
                 timeoutSeconds: 1
               livenessProbe:
                 httpGet:
