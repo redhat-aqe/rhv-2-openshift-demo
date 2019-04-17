@@ -1,6 +1,6 @@
 # Application secrets
 
-OpenShift has build in Secret object for storing passwords/secret files.
+OpenShift has built-in Secret object for storing passwords/secret files.
 
 Using oc command:
 ```
@@ -40,7 +40,7 @@ Using Ansible:
       kind: Secret
       metadata:
         name: "secret_password"
-        namespace: "{{ gutentag_ocp_namespace }}"
+        namespace: "{{ ocp_namespace }}"
       type: Opaque
       data:
         password: "{{ my_password }}" # value is stored in Ansible vault
@@ -71,6 +71,6 @@ The secret file or password can be injected to application as ENV variable or as
                     key: password
               name: my-app
               volumeMounts:
-                - name: metaxor-secret-file
+                - name: secret-file
                   mountPath: /etc/my-app/secrets
 ```

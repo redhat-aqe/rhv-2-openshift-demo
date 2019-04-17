@@ -106,7 +106,7 @@ status:
 
 ```
 
-Your application which is build on top of base image can be also automatically rebuilt when BuildConfig uses imageChange triggers.
+Your application which is built on top of the base image can be also automatically rebuilt when BuildConfig uses imageChange triggers.
 
 Here is an example of buildConfig which uses the trigger:
 

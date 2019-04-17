@@ -1,8 +1,8 @@
 # Liveness & Readiness probe
 
-Application in OpenShift can monitor itself using liveness probe. When the liveness probe detects an application is in broken state OpenShift automatically restart a pod with an application.
+Application in OpenShift can monitor itself using liveness probe. When the liveness probe detects an application is in broken state OpenShift automatically restarts a pod with the application.
 
-The readiness probe is usually used when application starts and it is not ready to get requests yet. The readiness probe blocks incoming traffic of requests until application is fully ready.
+The readiness probe is usually used when an application starts and it is not ready to receive requests yet. The readiness probe delays incoming traffic until application is fully ready to process them.
 ```yaml
 
   - apiVersion: v1
