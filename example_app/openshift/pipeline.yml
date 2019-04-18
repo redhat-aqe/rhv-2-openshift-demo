@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: pipeline-template
+objects:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      name: my-pipeline
+      labels:
+        name: my-pipeline
+    spec:
+      runPolicy: Serial
+      source:
+        type: None
+      strategy:
+        type: JenkinsPipeline
+        jenkinsPipelineStrategy:
+          jenkinsfile: |-
+              node() {
+                stage 'Run unittests'
+                  sh '''
+                    echo "Running tests..."
+                  '''
+
+                stage 'Build image'
+                  openshiftBuild(namespace: 'araszka-playground', buildConfig: 'my-app', showBuildLogs: 'true')
+                stage 'Deploy in dev'
+                  openshiftTag(namespace: 'araszka-playground', sourceStream: 'my-app',  sourceTag: 'latest', destinationStream: 'my-app', destinationTag: 'dev')
+                  openshiftDeploy(namespace: 'araszka-playground', deploymentConfig: 'my-app')
+                stage 'Deploy in stage'
+                  input 'Continue with stage deployments?'
+                  openshiftTag(namespace: 'araszka-playground', sourceStream: 'my-app',  sourceTag: 'dev', destinationStream: 'my-app', destinationTag: 'stage')
+                  //openshiftDeploy(namespace: 'araszka-playground-stage', deploymentConfig: 'my-app')
+                stage 'Deploy in prod'
+                  input 'Continue with prod deployments?'
+                  openshiftTag(namespace: 'araszka-playground', sourceStream: 'my-app',  sourceTag: 'stage', destinationStream: 'my-app', destinationTag: 'prod')
+                  //openshiftDeploy(namespace: 'araszka-playground-prod', deploymentConfig: 'my-app')
+              }
